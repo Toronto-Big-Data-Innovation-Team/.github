@@ -16,7 +16,7 @@ jobs:
       - run: |
           curl -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
           -H 'Accept: application/vnd.github.v4.raw' \
-          -O \
+          -O .sqlfluff \
           -L https://api.github.com/repos/Toronto-Big-Data-Innovation-Team/.github/contents/.github/workflows/.sqlfluff
 
       - uses: "actions/setup-python@v4"
