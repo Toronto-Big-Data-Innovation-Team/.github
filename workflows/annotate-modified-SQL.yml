@@ -1,0 +1,47 @@
+# this was developed off of sample actions documented here:
+# https://github.com/sqlfluff/sqlfluff-github-actions
+# it will run a linter (SQLFLuff) on all new or modified SQL files
+# and output annotations for linting errors to the files in GitHub
+
+name: Lint all new or modified SQL files
+
+on: workflow_call
+
+jobs:
+  lint-changed-sql:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: "actions/checkout@v3"
+
+      - run: |
+          curl -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
+          -H 'Accept: application/vnd.github.v4.raw' \
+          -O \
+          -L https://api.github.com/repos/Toronto-Big-Data-Innovation-Team/.github/contents/workflows/.sqlfluff
+
+      - uses: "actions/setup-python@v4"
+        with:
+          python-version: "3.8"
+
+      - name: Install SQLFluff
+        run: "pip install sqlfluff==1.4.5" # i.e. the latest version - upgrade as necessary
+
+      - name: Find changed SQL files # they appear as ${{ steps.files.outputs }} in the next step (a space-separated list of filepaths)
+        id: files
+        uses: Ana06/get-changed-files@v2.2.0 # there are several forks of this; I picked the one that seemed most up to date; others may suffice as well
+        with:
+          filter: '*\.sql'
+
+      - name: Lint # this is the actual linting step. It outputs into a JSON file that GitHub uses to annotate
+        id: sqlfluff_json
+        if: steps.files.outputs.modified != '' || steps.files.outputs.added != ''
+        shell: bash -l {0}
+        run: sqlfluff lint --format github-annotation --annotation-level failure --nofail ${{ steps.files.outputs.modified }} ${{ steps.files.outputs.added }} > annotations.json
+
+      - name: Annotate # reads that JSON file and does specal GitHub magic
+        if: steps.files.outputs.modified != '' || steps.files.outputs.added != ''
+        uses: yuzutech/annotations-action@v0.4.0
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          title: "SQLFluff Lint"
+          input: "./annotations.json"
