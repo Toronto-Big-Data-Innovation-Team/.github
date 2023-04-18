@@ -1,0 +1,19 @@
+[sqlfluff]
+dialect = postgres
+exclude_rules = L009, L030, L031, L032, L051, L055
+warnings = L001, L005, L006, L008, L016, L023, L050
+
+[sqlfluff:rules]
+tab_space_size = 4
+indent_unit = space
+max_line_length = 100
+aliasing = explicit
+
+[sqlfluff:rules:L010]
+capitalisation_policy = upper
+
+[sqlfluff:rules:L040]
+capitalisation_policy = upper
+
+[sqlfluff:rules:L063]
+extended_capitalisation_policy = lower
