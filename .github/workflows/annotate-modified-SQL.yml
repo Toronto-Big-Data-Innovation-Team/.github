@@ -18,6 +18,8 @@ jobs:
           -H 'Accept: application/vnd.github.v4.raw' \
           -O \
           -L https://api.github.com/repos/Toronto-Big-Data-Innovation-Team/.github/contents/.github/workflows/.sqlfluff
+      
+      - run: cat ./.sqlfluff
 
       - uses: "actions/setup-python@v4"
         with:
