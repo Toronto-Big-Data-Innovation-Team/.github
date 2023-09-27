@@ -36,7 +36,7 @@ jobs:
       - name: Lint
         if: steps.files.outputs.modified != '' || steps.files.outputs.added != ''
         shell: bash -l {0}
-        run: pylint --output-format=json:py-annotations.json ${{ steps.files.outputs.modified }} ${{ steps.files.outputs.added }}
+        run: pylint --output-format=json:py-annotations.json --rcfile pylint.toml ${{ steps.files.outputs.modified }} ${{ steps.files.outputs.added }}
 
       - name: Annotate # reads that JSON file and does specal GitHub magic
         if: steps.files.outputs.modified != '' || steps.files.outputs.added != ''
