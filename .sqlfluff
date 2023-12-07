@@ -1,19 +1,21 @@
 [sqlfluff]
 dialect = postgres
-exclude_rules = L009, L030, L031, L032, L034, L051, L055, L071
-warnings = L001, L005, L006, L008, L016, L023, L050
 
-[sqlfluff:rules]
+max_line_length = 100
+exclude_rules = layout.end-of-file, capitalisation.functions, aliasing.forbid, structure.using, ambiguous.join, convention.left_join, structure.column_order
+warnings = LT01, LT05, LT13
+
+[sqlfluff:indentation]
 tab_space_size = 4
 indent_unit = space
-max_line_length = 100
+
 aliasing = explicit
 
-[sqlfluff:rules:L010]
+[sqlfluff:rules:capitalisation.keywords]
 capitalisation_policy = upper
 
-[sqlfluff:rules:L040]
+[sqlfluff:rules:capitalisation.literals]
 capitalisation_policy = upper
 
-[sqlfluff:rules:L063]
+[sqlfluff:rules:capitalisation.types]
 extended_capitalisation_policy = lower

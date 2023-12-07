@@ -15,17 +15,16 @@ jobs:
       - uses: "actions/checkout@v3"
 
       - run: | # download the .sqlfluff config file from this repo to the repo the action is being run in
-          curl -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
-          -H 'Accept: application/vnd.github.v4.raw' \
+          curl \
           -O \
-          -L https://api.github.com/repos/Toronto-Big-Data-Innovation-Team/.github/contents/.sqlfluff
+          -L https://raw.githubusercontent.com/Toronto-Big-Data-Innovation-Team/.github/sqlfluff-upgrade/.sqlfluff
 
       - uses: "actions/setup-python@v4"
         with:
           python-version: "3.9"
 
       - name: Install SQLFluff
-        run: "pip install sqlfluff==1.4.5" # i.e. the latest version - upgrade as necessary
+        run: "pip install sqlfluff~=3.0.0a4"
 
       - name: Find changed SQL files # they appear as ${{ steps.files.outputs }} in the next step (a space-separated list of filepaths)
         id: files
