@@ -17,7 +17,7 @@ jobs:
       - run: | # download the .sqlfluff config file from this repo to the repo the action is being run in
           curl \
           -O \
-          -L https://raw.githubusercontent.com/Toronto-Big-Data-Innovation-Team/.github/sqlfluff-upgrade/.sqlfluff
+          -L https://raw.githubusercontent.com/Toronto-Big-Data-Innovation-Team/.github/main/.sqlfluff
 
       - uses: "actions/setup-python@v4"
         with:
