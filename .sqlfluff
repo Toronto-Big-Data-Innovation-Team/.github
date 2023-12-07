@@ -8,8 +8,7 @@ warnings = LT01, LT05, LT13
 [sqlfluff:indentation]
 tab_space_size = 4
 indent_unit = space
-
-aliasing = explicit
+indented_on_contents = False
 
 [sqlfluff:rules:capitalisation.keywords]
 capitalisation_policy = upper
