@@ -36,7 +36,7 @@ jobs:
         id: sqlfluff_json
         if: steps.files.outputs.modified != '' || steps.files.outputs.added != ''
         shell: bash -l {0}
-        run: sqlfluff lint --format github-annotation --nofail ${{ steps.files.outputs.modified }} ${{ steps.files.outputs.added }} > annotations.json
+        run: sqlfluff lint --format github-annotation --annotation-level failure --nofail ${{ steps.files.outputs.modified }} ${{ steps.files.outputs.added }} > annotations.json
 
       - name: Annotate # reads that JSON file and does specal GitHub magic
         if: steps.files.outputs.modified != '' || steps.files.outputs.added != ''
