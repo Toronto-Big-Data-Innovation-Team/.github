@@ -12,7 +12,7 @@ jobs:
   lint-changed-sql:
     runs-on: ubuntu-latest
     steps:
-      - uses: "actions/checkout@v3"
+      - uses: "actions/checkout@v4"
 
       - run: | # download the .sqlfluff config file from this repo to the repo the action is being run in
           curl \
