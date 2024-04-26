@@ -24,7 +24,7 @@ jobs:
           python-version: "3.9"
 
       - name: Install SQLFluff
-        run: "pip install sqlfluff~=3.0.0a4"
+        run: "pip install sqlfluff~=3.0.5"
 
       - name: Find changed SQL files # they appear as ${{ steps.files.outputs }} in the next step (a space-separated list of filepaths)
         id: files
