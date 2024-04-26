@@ -12,23 +12,23 @@ jobs:
   lint-changed-sql:
     runs-on: ubuntu-latest
     steps:
-      - uses: "actions/checkout@v3"
+      - uses: "actions/checkout@v4"
 
       - run: | # download the .sqlfluff config file from this repo to the repo the action is being run in
           curl \
           -O \
           -L https://raw.githubusercontent.com/Toronto-Big-Data-Innovation-Team/.github/main/.sqlfluff
 
-      - uses: "actions/setup-python@v4"
+      - uses: "actions/setup-python@v5"
         with:
           python-version: "3.9"
 
       - name: Install SQLFluff
-        run: "pip install sqlfluff~=3.0.0a4"
+        run: "pip install sqlfluff~=3.0.5"
 
       - name: Find changed SQL files # they appear as ${{ steps.files.outputs }} in the next step (a space-separated list of filepaths)
         id: files
-        uses: Ana06/get-changed-files@v2.2.0 # there are several forks of this; I picked the one that seemed most up to date; others may suffice as well
+        uses: Ana06/get-changed-files@v2.3.0 # there are several forks of this; I picked the one that seemed most up to date; others may suffice as well
         with:
           filter: '*\.sql'
 
@@ -40,7 +40,7 @@ jobs:
 
       - name: Annotate # reads that JSON file and does specal GitHub magic
         if: steps.files.outputs.modified != '' || steps.files.outputs.added != ''
-        uses: yuzutech/annotations-action@v0.4.0
+        uses: yuzutech/annotations-action@v0.5.0
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           title: "SQLFluff Lint"
