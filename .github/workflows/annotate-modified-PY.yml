@@ -1,0 +1,47 @@
+# this will run a linter (pylint) on all new or modified Python files
+# and output annotations for linting errors to the files in GitHub
+
+name: Lint all new or modified Python files
+
+on: workflow_call
+
+jobs:
+  lint-changed-python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: "actions/checkout@v3"
+
+      - run: | # download the config file from this repo to the repo the action is being run in
+          curl -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
+          -H 'Accept: application/vnd.github.v4.raw' \
+          -O \
+          -L https://api.github.com/repos/Toronto-Big-Data-Innovation-Team/.github/contents/pylint.toml
+
+      - uses: "actions/setup-python@v4"
+        with:
+          python-version: "3.10"
+
+      - name: Install pylint
+        run: "pip install pylint~=2.17.0" # i.e. the latest version - upgrade as necessary
+
+      - name: Find changed .py files # they appear as ${{ steps.files.outputs }} in a later step (a space-separated list of filepaths)
+        id: files
+        uses: Ana06/get-changed-files@v2.2.0 # there are several forks of this; I picked the one that seemed most up to date; others may suffice as well
+        with:
+          filter: '*\.py'
+
+      - name: Setup Pylint annotations
+        uses: rodrigo-nogues/pylint-annotations@v1
+
+      - name: Lint
+        if: steps.files.outputs.modified != '' || steps.files.outputs.added != ''
+        shell: bash -l {0}
+        run: pylint --output-format=json:py-annotations.json --rcfile pylint.toml ${{ steps.files.outputs.modified }} ${{ steps.files.outputs.added }}
+
+      - name: Annotate # reads that JSON file and does specal GitHub magic
+        if: steps.files.outputs.modified != '' || steps.files.outputs.added != ''
+        uses: yuzutech/annotations-action@v0.4.0
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          title: "SQLFluff Lint"
+          input: "./py-annotations.json"
