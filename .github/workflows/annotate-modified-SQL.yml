@@ -13,36 +13,28 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: "actions/checkout@v4"
+      - uses: "actions/checkout@v6"
 
       - run: | # download the .sqlfluff config file from this repo to the repo the action is being run in
           curl \
           -O \
           -L https://raw.githubusercontent.com/Toronto-Big-Data-Innovation-Team/.github/main/.sqlfluff
 
-      - uses: "actions/setup-python@v5"
+      - uses: "actions/setup-python@v6"
         with:
-          python-version: "3.9"
+          python-version: "3.12"
 
       - name: Install SQLFluff
         run: "pip install sqlfluff~=3.2.5"
 
       - name: Find changed SQL files # they appear as ${{ steps.files.outputs }} in the next step (a space-separated list of filepaths)
         id: files
-        uses: Ana06/get-changed-files@v2.3.0 # there are several forks of this; I picked the one that seemed most up to date; others may suffice as well
+        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
         with:
-          filter: '*\.sql'
+          files: "**.sql"
 
-      - name: Lint # this is the actual linting step. It outputs into a JSON file that GitHub uses to annotate
-        id: sqlfluff_json
-        if: steps.files.outputs.modified != '' || steps.files.outputs.added != ''
-        shell: bash -l {0}
-        run: sqlfluff lint --format github-annotation --annotation-level failure --nofail ${{ steps.files.outputs.modified }} ${{ steps.files.outputs.added }} > annotations.json
-
-      - name: Annotate # reads that JSON file and does specal GitHub magic
-        if: steps.files.outputs.modified != '' || steps.files.outputs.added != ''
-        uses: yuzutech/annotations-action@v0.5.0
-        with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          title: "SQLFluff Lint"
-          input: "./annotations.json"
+      - name: Lint # prints GitHub annotations straight to the log, no JSON file needed
+        if: steps.files.outputs.any_changed == 'true'
+        env:
+          CHANGED_FILES: ${{ steps.files.outputs.all_changed_files }}
+        run: sqlfluff lint --format github-annotation-native --annotation-level failure --nofail $CHANGED_FILES
